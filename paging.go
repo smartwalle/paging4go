@@ -1,10 +1,14 @@
 package paging4go
 
 import (
+	"github.com/smartwalle/time4go"
 	"math"
 	"strconv"
 	"strings"
-	"time"
+)
+
+const (
+	K_DATE_TIME_FORMAT = "2006-01-02 15:04:05 -0700"
 )
 
 // --------------------------------------------------------------------------------
@@ -12,18 +16,18 @@ type Pagination interface {
 	GetKeywords() string
 	GetLimit() uint64
 	GetPage() uint64
-	GetBeginTime() *time.Time
-	GetEndTime() *time.Time
+	GetBeginTime() *time4go.Time
+	GetEndTime() *time4go.Time
 }
 
 // --------------------------------------------------------------------------------
 // Form 用于转换 http request 的分页参数
 type Form struct {
-	Keywords  string     `form:"keywords"`
-	Limit     uint64     `form:"limit"`
-	Page      uint64     `form:"page"`
-	BeginTime *time.Time `form:"begin_time"`
-	EndTime   *time.Time `form:"end_time"`
+	Keywords  string        `form:"keywords"`
+	Limit     uint64        `form:"limit"`
+	Page      uint64        `form:"page"`
+	BeginTime *time4go.Time `form:"begin_time"`
+	EndTime   *time4go.Time `form:"end_time"`
 }
 
 func (this *Form) CleanedPage(p string) uint64 {
@@ -35,20 +39,20 @@ func (this *Form) CleanedPage(p string) uint64 {
 	return page
 }
 
-func (this *Form) CleanedBeginTime(p string) *time.Time {
-	var t, err = time.Parse(time.RFC3339, p)
+func (this *Form) CleanedBeginTime(p string) *time4go.Time {
+	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
 	if err == nil {
 		t = t.Local()
-		return &t
+		return t
 	}
 	return nil
 }
 
-func (this *Form) CleanedEndTime(p string) *time.Time {
-	var t, err = time.Parse(time.RFC3339, p)
+func (this *Form) CleanedEndTime(p string) *time4go.Time {
+	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
 	if err == nil {
 		t = t.Local()
-		return &t
+		return t
 	}
 	return nil
 }
@@ -77,11 +81,11 @@ func (this *Form) GetPage() uint64 {
 	return this.Page
 }
 
-func (this *Form) GetBeginTime() *time.Time {
+func (this *Form) GetBeginTime() *time4go.Time {
 	return this.BeginTime
 }
 
-func (this *Form) GetEndTime() *time.Time {
+func (this *Form) GetEndTime() *time4go.Time {
 	return this.EndTime
 }
 
