@@ -42,7 +42,7 @@ func (this *Form) CleanedPage(p string) uint64 {
 func (this *Form) CleanedBeginTime(p string) *time4go.Time {
 	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
 	if err == nil {
-		t = t.UTC()
+		t = t.Local()
 		return t
 	}
 	return nil
@@ -51,7 +51,7 @@ func (this *Form) CleanedBeginTime(p string) *time4go.Time {
 func (this *Form) CleanedEndTime(p string) *time4go.Time {
 	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
 	if err == nil {
-		t = t.UTC()
+		t = t.Local()
 		return t
 	}
 	return nil
