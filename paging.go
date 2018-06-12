@@ -21,8 +21,8 @@ type Pagination interface {
 }
 
 // --------------------------------------------------------------------------------
-// Form 用于转换 http request 的分页参数
-type Form struct {
+// ListForm 用于转换 http request 的分页参数
+type ListForm struct {
 	Keywords  string        `form:"keywords"`
 	Limit     uint64        `form:"limit"`
 	Page      uint64        `form:"pageInfo"`
@@ -30,7 +30,7 @@ type Form struct {
 	EndTime   *time4go.Time `form:"end_time"`
 }
 
-func (this *Form) CleanedPage(p string) uint64 {
+func (this *ListForm) CleanedPage(p string) uint64 {
 	var page, _ = strconv.ParseUint(p, 10, 64)
 	page = page - 1
 	if page < 0 {
@@ -39,7 +39,7 @@ func (this *Form) CleanedPage(p string) uint64 {
 	return page
 }
 
-func (this *Form) CleanedBeginTime(p string) *time4go.Time {
+func (this *ListForm) CleanedBeginTime(p string) *time4go.Time {
 	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
 	if err == nil {
 		t = t.Local()
@@ -48,7 +48,7 @@ func (this *Form) CleanedBeginTime(p string) *time4go.Time {
 	return nil
 }
 
-func (this *Form) CleanedEndTime(p string) *time4go.Time {
+func (this *ListForm) CleanedEndTime(p string) *time4go.Time {
 	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
 	if err == nil {
 		t = t.Local()
@@ -57,35 +57,35 @@ func (this *Form) CleanedEndTime(p string) *time4go.Time {
 	return nil
 }
 
-func (this *Form) CleanedKeywords(p string) string {
+func (this *ListForm) CleanedKeywords(p string) string {
 	return strings.TrimSpace(p)
 }
 
-func (this *Form) DefaultLimit() uint64 {
+func (this *ListForm) DefaultLimit() uint64 {
 	return 20
 }
 
-func (this *Form) DefaultPage() uint64 {
+func (this *ListForm) DefaultPage() uint64 {
 	return 0
 }
 
-func (this *Form) GetKeywords() string {
+func (this *ListForm) GetKeywords() string {
 	return strings.TrimSpace(this.Keywords)
 }
 
-func (this *Form) GetLimit() uint64 {
+func (this *ListForm) GetLimit() uint64 {
 	return this.Limit
 }
 
-func (this *Form) GetPage() uint64 {
+func (this *ListForm) GetPage() uint64 {
 	return this.Page
 }
 
-func (this *Form) GetBeginTime() *time4go.Time {
+func (this *ListForm) GetBeginTime() *time4go.Time {
 	return this.BeginTime
 }
 
-func (this *Form) GetEndTime() *time4go.Time {
+func (this *ListForm) GetEndTime() *time4go.Time {
 	return this.EndTime
 }
 
