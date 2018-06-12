@@ -25,7 +25,7 @@ type Pagination interface {
 type Form struct {
 	Keywords  string        `form:"keywords"`
 	Limit     uint64        `form:"limit"`
-	Page      uint64        `form:"page"`
+	Page      uint64        `form:"pageInfo"`
 	BeginTime *time4go.Time `form:"begin_time"`
 	EndTime   *time4go.Time `form:"end_time"`
 }
@@ -90,16 +90,16 @@ func (this *Form) GetEndTime() *time4go.Time {
 }
 
 // --------------------------------------------------------------------------------
-// Paging 用于返回给客户端
-type Paging struct {
+// ListData 用于返回给客户端
+type ListData struct {
 	Total uint64      `json:"total"      sql:"total"` // 共有多少条数据
 	Page  uint64      `json:"page"       sql:"-"`     // 当前页码
 	Limit uint64      `json:"limit"      sql:"-"`     // 每页最大数据量
 	Data  interface{} `json:"data"       sql:"-"`     // 当前页的数据
 }
 
-func (this *Paging) GetPagingInfo() *PageInfo {
-	return pagingInfo(this.Total, this.Page, this.Limit)
+func (this *ListData) GetPageInfo() *PageInfo {
+	return pageInfo(this.Total, this.Page, this.Limit)
 }
 
 type PageInfo struct {
@@ -111,7 +111,7 @@ type PageInfo struct {
 	PageList []int `json:"page_list"      sql:"-"`
 }
 
-func pagingInfo(total, currentPage, pageLimit uint64) (page *PageInfo) {
+func pageInfo(total, currentPage, pageLimit uint64) (page *PageInfo) {
 	var maxPage = 5
 	var midPage = uint64(math.Ceil(float64(maxPage) / 2.0))
 	var totalPage = int(math.Ceil(float64(total) / float64(pageLimit)))
