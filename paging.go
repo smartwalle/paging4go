@@ -25,7 +25,7 @@ type Pagination interface {
 type ListForm struct {
 	Keywords  string        `form:"keywords"`
 	Limit     uint64        `form:"limit"`
-	Page      uint64        `form:"pageInfo"`
+	Page      uint64        `form:"page"`
 	BeginTime *time4go.Time `form:"begin_time"`
 	EndTime   *time4go.Time `form:"end_time"`
 }
