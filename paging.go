@@ -14,8 +14,8 @@ const (
 // --------------------------------------------------------------------------------
 type Pagination interface {
 	GetKeywords() string
-	GetLimit() uint64
-	GetPage() uint64
+	GetLimit() int64
+	GetPage() int64
 	GetBeginTime() *time4go.Time
 	GetEndTime() *time4go.Time
 }
@@ -24,14 +24,14 @@ type Pagination interface {
 // ListForm 用于转换 http request 的分页参数
 type ListForm struct {
 	Keywords  string        `form:"keywords"`
-	Limit     uint64        `form:"limit"`
-	Page      uint64        `form:"page"`
+	Limit     int64         `form:"limit"`
+	Page      int64         `form:"page"`
 	BeginTime *time4go.Time `form:"begin_time"`
 	EndTime   *time4go.Time `form:"end_time"`
 }
 
-func (this *ListForm) CleanedPage(p string) uint64 {
-	var page, _ = strconv.ParseUint(p, 10, 64)
+func (this *ListForm) CleanedPage(p string) int64 {
+	var page, _ = strconv.ParseInt(p, 10, 32)
 	page = page - 1
 	if page < 0 {
 		return 0
@@ -61,11 +61,11 @@ func (this *ListForm) CleanedKeywords(p string) string {
 	return strings.TrimSpace(p)
 }
 
-func (this *ListForm) DefaultLimit() uint64 {
+func (this *ListForm) DefaultLimit() int64 {
 	return 20
 }
 
-func (this *ListForm) DefaultPage() uint64 {
+func (this *ListForm) DefaultPage() int64 {
 	return 0
 }
 
@@ -73,11 +73,11 @@ func (this *ListForm) GetKeywords() string {
 	return strings.TrimSpace(this.Keywords)
 }
 
-func (this *ListForm) GetLimit() uint64 {
+func (this *ListForm) GetLimit() int64 {
 	return this.Limit
 }
 
-func (this *ListForm) GetPage() uint64 {
+func (this *ListForm) GetPage() int64 {
 	return this.Page
 }
 
@@ -92,9 +92,9 @@ func (this *ListForm) GetEndTime() *time4go.Time {
 // --------------------------------------------------------------------------------
 // ListData 用于返回给客户端
 type ListData struct {
-	Total uint64      `json:"total"      sql:"total"` // 共有多少条数据
-	Page  uint64      `json:"page"       sql:"-"`     // 当前页码
-	Limit uint64      `json:"limit"      sql:"-"`     // 每页最大数据量
+	Total int64       `json:"total"      sql:"total"` // 共有多少条数据
+	Page  int64       `json:"page"       sql:"-"`     // 当前页码
+	Limit int64       `json:"limit"      sql:"-"`     // 每页最大数据量
 	Data  interface{} `json:"data"       sql:"-"`     // 当前页的数据
 }
 
@@ -103,23 +103,23 @@ func (this *ListData) GetPageInfo() *PageInfo {
 }
 
 type PageInfo struct {
-	Total    int   `json:"total"          sql:"-"`
-	Page     int   `json:"page"           sql:"-"`
-	Limit    int   `json:"limit"          sql:"-"`
-	PrevPage int   `json:"prev_page"      sql:"-"`
-	NextPage int   `json:"next_page"      sql:"-"`
-	PageList []int `json:"page_list"      sql:"-"`
+	Total    int64   `json:"total"          sql:"-"`
+	Page     int64   `json:"page"           sql:"-"`
+	Limit    int64   `json:"limit"          sql:"-"`
+	PrevPage int64   `json:"prev_page"      sql:"-"`
+	NextPage int64   `json:"next_page"      sql:"-"`
+	PageList []int64 `json:"page_list"      sql:"-"`
 }
 
-func pageInfo(total, currentPage, pageLimit uint64) (page *PageInfo) {
-	var maxPage = 5
-	var midPage = uint64(math.Ceil(float64(maxPage) / 2.0))
-	var totalPage = int(math.Ceil(float64(total) / float64(pageLimit)))
+func pageInfo(total, currentPage, pageLimit int64) (page *PageInfo) {
+	var maxPage int64 = 5
+	var midPage = int64(math.Ceil(float64(maxPage) / 2.0))
+	var totalPage = int64(math.Ceil(float64(total) / float64(pageLimit)))
 
 	page = &PageInfo{}
 	page.Total = totalPage
-	page.Page = int(currentPage)
-	page.Limit = int(pageLimit)
+	page.Page = int64(currentPage)
+	page.Limit = int64(pageLimit)
 
 	if page.Page == 1 || page.Total <= 0 {
 		page.PrevPage = -1
@@ -133,12 +133,13 @@ func pageInfo(total, currentPage, pageLimit uint64) (page *PageInfo) {
 	}
 
 	if totalPage <= maxPage {
-		for i := 0; i < totalPage; i++ {
+		var i int64 = 0
+		for i = 0; i < totalPage; i++ {
 			page.PageList = append(page.PageList, i+1)
 		}
 	} else {
-		var beginPage = int(math.Max(float64(int(currentPage-midPage)), 0))
-		var endPage = int(math.Min(float64(beginPage)+float64(maxPage), float64(totalPage)))
+		var beginPage = int64(math.Max(float64(int(currentPage-midPage)), 0))
+		var endPage = int64(math.Min(float64(beginPage)+float64(maxPage), float64(totalPage)))
 		if endPage-beginPage < maxPage {
 			beginPage = beginPage - (maxPage - (endPage - beginPage))
 		}
