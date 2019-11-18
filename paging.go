@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	K_DATE_TIME_FORMAT = "2006-01-02T15:04:05-07:00"
+	DateTimeFormat = "2006-01-02T15:04:05-07:00"
 )
 
 // --------------------------------------------------------------------------------
@@ -18,6 +18,7 @@ type Pagination interface {
 	GetPage() int64
 	GetBeginTime() *time4go.Time
 	GetEndTime() *time4go.Time
+	GetOrderBy() []string
 }
 
 // --------------------------------------------------------------------------------
@@ -26,12 +27,13 @@ type ListForm struct {
 	Keywords  string        `form:"keywords"`
 	Limit     int64         `form:"limit"`
 	Page      int64         `form:"page"`
+	OrderBy   []string      `form:"order_by"`
 	BeginTime *time4go.Time `form:"begin_time"`
 	EndTime   *time4go.Time `form:"end_time"`
 }
 
 func (this *ListForm) CleanedPage(p string) int64 {
-	var page, _ = strconv.ParseInt(p, 10, 32)
+	var page, _ = strconv.ParseInt(p, 10, 64)
 	page = page - 1
 	if page < 0 {
 		return 0
@@ -40,7 +42,7 @@ func (this *ListForm) CleanedPage(p string) int64 {
 }
 
 func (this *ListForm) CleanedBeginTime(p string) *time4go.Time {
-	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
+	var t, err = time4go.Parse(DateTimeFormat, p)
 	if err == nil {
 		t = t.Local()
 		return t
@@ -49,7 +51,7 @@ func (this *ListForm) CleanedBeginTime(p string) *time4go.Time {
 }
 
 func (this *ListForm) CleanedEndTime(p string) *time4go.Time {
-	var t, err = time4go.Parse(K_DATE_TIME_FORMAT, p)
+	var t, err = time4go.Parse(DateTimeFormat, p)
 	if err == nil {
 		t = t.Local()
 		return t
@@ -89,6 +91,10 @@ func (this *ListForm) GetEndTime() *time4go.Time {
 	return this.EndTime
 }
 
+func (this *ListForm) GetOrderBy() []string {
+	return this.OrderBy
+}
+
 // --------------------------------------------------------------------------------
 // ListData 用于返回给客户端
 type ListData struct {
@@ -118,8 +124,8 @@ func pageInfo(total, currentPage, pageLimit int64) (page *PageInfo) {
 
 	page = &PageInfo{}
 	page.Total = totalPage
-	page.Page = int64(currentPage)
-	page.Limit = int64(pageLimit)
+	page.Page = currentPage
+	page.Limit = pageLimit
 
 	if page.Page == 1 || page.Total <= 0 {
 		page.PrevPage = -1
