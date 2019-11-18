@@ -1,14 +1,9 @@
 package paging4go
 
 import (
-	"github.com/smartwalle/time4go"
 	"math"
 	"strconv"
 	"strings"
-)
-
-const (
-	DateTimeFormat = "2006-01-02T15:04:05-07:00"
 )
 
 // --------------------------------------------------------------------------------
@@ -16,20 +11,20 @@ type Pagination interface {
 	GetKeywords() string
 	GetLimit() int64
 	GetPage() int64
-	GetBeginTime() *time4go.Time
-	GetEndTime() *time4go.Time
+	GetBeginTime() int64
+	GetEndTime() int64
 	GetOrderBy() []string
 }
 
 // --------------------------------------------------------------------------------
 // ListForm 用于转换 http request 的分页参数
 type ListForm struct {
-	Keywords  string        `form:"keywords"`
-	Limit     int64         `form:"limit"`
-	Page      int64         `form:"page"`
-	OrderBy   []string      `form:"order_by"`
-	BeginTime *time4go.Time `form:"begin_time"`
-	EndTime   *time4go.Time `form:"end_time"`
+	Keywords  string   `form:"keywords"`
+	Limit     int64    `form:"limit"`
+	Page      int64    `form:"page"`
+	OrderBy   []string `form:"order_by"`
+	BeginTime int64    `form:"begin_time"`
+	EndTime   int64    `form:"end_time"`
 }
 
 func (this *ListForm) CleanedPage(p string) int64 {
@@ -39,24 +34,6 @@ func (this *ListForm) CleanedPage(p string) int64 {
 		return 0
 	}
 	return page
-}
-
-func (this *ListForm) CleanedBeginTime(p string) *time4go.Time {
-	var t, err = time4go.Parse(DateTimeFormat, p)
-	if err == nil {
-		t = t.Local()
-		return t
-	}
-	return nil
-}
-
-func (this *ListForm) CleanedEndTime(p string) *time4go.Time {
-	var t, err = time4go.Parse(DateTimeFormat, p)
-	if err == nil {
-		t = t.Local()
-		return t
-	}
-	return nil
 }
 
 func (this *ListForm) CleanedKeywords(p string) string {
@@ -83,11 +60,11 @@ func (this *ListForm) GetPage() int64 {
 	return this.Page
 }
 
-func (this *ListForm) GetBeginTime() *time4go.Time {
+func (this *ListForm) GetBeginTime() int64 {
 	return this.BeginTime
 }
 
-func (this *ListForm) GetEndTime() *time4go.Time {
+func (this *ListForm) GetEndTime() int64 {
 	return this.EndTime
 }
 
