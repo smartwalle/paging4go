@@ -2,7 +2,6 @@ package paging4go
 
 import (
 	"math"
-	"strconv"
 	"strings"
 )
 
@@ -27,15 +26,6 @@ type ListForm struct {
 	EndTime   int64    `form:"end_time"        json:"end_time"`
 }
 
-func (this *ListForm) CleanedPage(p string) int64 {
-	var page, _ = strconv.ParseInt(p, 10, 64)
-	page = page - 1
-	if page < 0 {
-		return 0
-	}
-	return page
-}
-
 func (this *ListForm) CleanedKeywords(p string) string {
 	return strings.TrimSpace(p)
 }
@@ -57,7 +47,11 @@ func (this *ListForm) GetLimit() int64 {
 }
 
 func (this *ListForm) GetPage() int64 {
-	return this.Page
+	var page = this.Page - 1
+	if page < 0 {
+		return 0
+	}
+	return page
 }
 
 func (this *ListForm) GetBeginTime() int64 {
