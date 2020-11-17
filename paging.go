@@ -19,12 +19,12 @@ type Pagination interface {
 // --------------------------------------------------------------------------------
 // ListForm 用于转换 http request 的分页参数
 type ListForm struct {
-	Keywords  string   `form:"keywords"`
-	Limit     int64    `form:"limit"`
-	Page      int64    `form:"page"`
-	OrderBy   []string `form:"order_by"`
-	BeginTime int64    `form:"begin_time"`
-	EndTime   int64    `form:"end_time"`
+	Keywords  string   `form:"keywords"        json:"keywords"`
+	Limit     int64    `form:"limit"           json:"limit"`
+	Page      int64    `form:"page"            json:"page"`
+	OrderBy   []string `form:"order_by"        json:"order_by"`
+	BeginTime int64    `form:"begin_time"      json:"begin_time"`
+	EndTime   int64    `form:"end_time"        json:"end_time"`
 }
 
 func (this *ListForm) CleanedPage(p string) int64 {
