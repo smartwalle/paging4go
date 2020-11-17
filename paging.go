@@ -26,23 +26,14 @@ type ListForm struct {
 	EndTime   int64    `form:"end_time"        json:"end_time"`
 }
 
-func (this *ListForm) CleanedKeywords(p string) string {
-	return strings.TrimSpace(p)
-}
-
-func (this *ListForm) DefaultLimit() int64 {
-	return 20
-}
-
-func (this *ListForm) DefaultPage() int64 {
-	return 0
-}
-
 func (this *ListForm) GetKeywords() string {
 	return strings.TrimSpace(this.Keywords)
 }
 
 func (this *ListForm) GetLimit() int64 {
+	if this.Limit <= 0 {
+		return 10
+	}
 	return this.Limit
 }
 
